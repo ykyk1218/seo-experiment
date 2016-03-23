@@ -1,0 +1,4 @@
+/.bundle
+/vendor/bundle
+tags
+.DS_Store
