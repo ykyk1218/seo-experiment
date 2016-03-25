@@ -7,24 +7,30 @@
       $(document).ready(function() {
         $.ajax({
           type: "GET",
-          url: "https://qiita.com/api/v2/items?page="+ page +"&per_page=20",
-          dateType: "json",
-          success: function(msg) {
-            html = "";
-            for(var i=0; i<msg.length; i++) {
-              html = html + msg[i].title + "<br>"
-            }
-            $("#qiita").html(html)
+          headers: {
+            "Access-Control-Allow-Origin": "*"
+          },
+          url: "/kizashi",
+          dateType: "xml",
+          success: function(xml) {
+            console.log(xml)
+            var text = ""
+            xml.find("item").each (function() {
+              console.log($("title").text());
+              text += $("title").text() + "<br>";
+            });
+            html = text
+            $("#kizashi").html(html)
           }
         });
-
+    
         $("#next").on('click', function(e) {
           e.preventDefault
           page = parseInt(page) + 1;
           loadData(page)
           history.pushState(page, "Qiita" + page + "ページ目", "?page=" + page);
         });
-
+    
         //ブラウザ操作
         $(window).on('popstate', function(e) {
           if (!e.originalEvent.state) return
@@ -44,7 +50,7 @@
           }
         });
       });
-
+    
       function loadData(page) {
         console.log(page)
         //url書き換え
@@ -65,9 +71,9 @@
       body {
         padding: 30px;
       }
-
-    h1 Qiitaの新着記事をタイトルを表示
-    div id="qiita"
+    
+    h1 Kizashiランキング取得
+    div id="kizashi"
     div
       a id="next" href="javascript:;" 次へ
 
