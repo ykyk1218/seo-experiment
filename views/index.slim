@@ -1,1 +1,78 @@
-ほげ
+doctype html
+html
+  head
+    meta charset="utf-8"
+    script src="https://code.jquery.com/jquery-2.2.2.min.js" integrity="sha256-36cp2Co+/62rEAAYHLmRCPIych47CvdM+uTBJwSzWjI=" crossorigin="anonymous"
+    script src="./javascripts/purl.js"
+    javascript:
+      var page = $.url().param('page');
+      if(!page) {
+        page = 1
+      }
+      $(document).ready(function() {
+        $.ajax({
+          type: "GET",
+          url: "https://qiita.com/api/v2/items?page="+ page +"&per_page=20",
+          dateType: "json",
+          success: function(msg) {
+            html = "";
+            for(var i=0; i<msg.length; i++) {
+              html = html + msg[i].title + "<br>"
+            }
+            $("#qiita").html(html)
+          }
+        });
+
+        $("#next").on('click', function(e) {
+          e.preventDefault
+          page = parseInt(page) + 1;
+          loadData(page)
+          history.pushState(page, "Qiita" + page + "ページ目", "?page=" + page);
+        });
+
+         //ブラウザ操作
+         $(window).on('popstate', function(e) {
+           if (!e.originalEvent.state) return
+           //$.url()で今のURLが取れるはずだけど、ブラウザバッグだとうまくとれない
+           //location.pathnameだとURLが取れるのでこれを引数で渡す
+           var url = $.url(location.pathname)
+           var currentPage = url.param('page');
+           if (currentPage == page) {
+             return;
+           }else{
+             if(!currentPage) {
+               page = 1
+             }else{
+               page = currentPage
+             }
+             loadData(page)
+           }
+         });
+       });
+
+       function loadData(page) {
+         console.log(page)
+         //url書き換え
+         $.ajax({
+           type: "GET",
+           url: "https://qiita.com/api/v2/items?page="+ page +"&per_page=20",
+           dateType: "json",
+           success: function(msg) {
+             html = ""
+             for(var i=0; i<msg.length; i++) {
+               html = html + msg[i].title + "<br>"
+             }
+             $("#qiita").html(html)
+            }
+         });
+       }
+
+    title Sample File
+  body
+    h1 Qiitaの新着記事をタイトルを表示
+    div id="qiita"
+    div
+      a id="next" href="javascript:;" 次へ
+
+      
+
