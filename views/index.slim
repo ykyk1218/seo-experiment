@@ -30,25 +30,25 @@ html
           history.pushState(page, "Qiita" + page + "ページ目", "?page=" + page);
         });
 
-         //ブラウザ操作
-         $(window).on('popstate', function(e) {
-           if (!e.originalEvent.state) return
-           //$.url()で今のURLが取れるはずだけど、ブラウザバッグだとうまくとれない
-           //location.pathnameだとURLが取れるのでこれを引数で渡す
-           var url = $.url(location.pathname)
-           var currentPage = url.param('page');
-           if (currentPage == page) {
-             return;
-           }else{
-             if(!currentPage) {
-               page = 1
-             }else{
-               page = currentPage
-             }
-             loadData(page)
-           }
-         });
-       });
+        //ブラウザ操作
+        $(window).on('popstate', function(e) {
+          if (!e.originalEvent.state) return
+          //$.url()で今のURLが取れるはずだけど、ブラウザバッグだとうまくとれない
+          //location.pathnameだとURLが取れるのでこれを引数で渡す
+          var url = $.url(location.href);
+          var currentPage = url.param('page');
+          if (currentPage == page) {
+            return;
+          }else{
+            if(!currentPage) {
+              page = 1
+            }else{
+              page = currentPage
+            }
+            loadData(page)
+          }
+        });
+      });
 
        function loadData(page) {
          console.log(page)
