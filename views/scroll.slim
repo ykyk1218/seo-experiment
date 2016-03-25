@@ -5,22 +5,21 @@
         page = 1
       }
       $(document).ready(function() {
+        // はてなのAPI直接叩くとクAccess-Control-Allow-Originのクロスドメイン制約で怒られるので
+        // ruby側から叩く用にする
         $.ajax({
           type: "GET",
-          headers: {
-            "Access-Control-Allow-Origin": "*"
-          },
-          url: "/kizashi",
-          dateType: "xml",
-          success: function(xml) {
-            console.log(xml)
+          url: "/b_hatena",
+          dateType: "json",
+          success: function(body) {
             var text = ""
-            xml.find("item").each (function() {
-              console.log($("title").text());
-              text += $("title").text() + "<br>";
-            });
-            html = text
-            $("#kizashi").html(html)
+            var comment = ""
+            for(var i=0, i<body["bookmarks"].length, i++) {
+              var json = body["bookmarks"][i]
+              comment = json["comment"]
+            }
+            html = comment
+            $("#b_hatena").html(comment)
           }
         });
     
@@ -72,8 +71,8 @@
         padding: 30px;
       }
     
-    h1 Kizashiランキング取得
-    div id="kizashi"
+    h1 はてなブックマークのコメント取得
+    div id="b_hatena"
     div
       a id="next" href="javascript:;" 次へ
 

@@ -22,7 +22,7 @@ class App < Sinatra::Base
     slim :scroll 
   end
 
-  get '/kizashi' do
+  get '/b_hatena' do
     require 'rexml/document'
     require 'net/http'
 
@@ -30,9 +30,14 @@ class App < Sinatra::Base
     url = "http://b.hatena.ne.jp/entry/json/?url=" + CGI.escape("http://anond.hatelabo.jp/20160215171759")
     uri = URI.parse(url)
 
-    @xml = Net::HTTP.get(uri)
-    @xml = @xml.encode("UTF-8")
+    userAgent = 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0)'
+    response = nil
+    Net::HTTP.start(uri.host) do |http|
+      response = http.get(uri, {'User-Agent' => userAgent})
+    end
+    @xml = response.body
+    #@xml = Net::HTTP.get(uri)
 
-    slim :kizashi, :layout=>:ajax_layout
+    slim :b_hatena, :layout=>:ajax_layout
   end
 end
