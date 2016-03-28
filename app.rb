@@ -4,6 +4,7 @@ require 'slim'
 require 'sass'
 require 'coffee-script'
 require 'logger'
+require 'json'
 
 $stdout.sync = true
 logger = Logger.new('sinatra.log')
@@ -35,9 +36,23 @@ class App < Sinatra::Base
     Net::HTTP.start(uri.host) do |http|
       response = http.get(uri, {'User-Agent' => userAgent})
     end
-    @xml = response.body
+    @json = response.body
+    json_data = JSON.load(response.body)
+    page = params[:page]
+    page_view_count = 10
+    result_data = []
+    roop_count = 0
+    json_data['bookmarks'].each.with_index((page.to_i-1)*10) do |bookmark|
+      result_data.push(bookmark)
+      roop_count = roop_count + 1
+      if roop_count >= page_view_count
+        break
+      end
+    end
     #@xml = Net::HTTP.get(uri)
 
-    slim :b_hatena, :layout=>:ajax_layout
+    content_type :json
+    #slim :b_hatena, :layout=>:ajax_layout
+    result_data.to_json
   end
 end

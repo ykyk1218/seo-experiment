@@ -5,18 +5,7 @@
         page = 1
       }
       $(document).ready(function() {
-        $.ajax({
-          type: "GET",
-          url: "https://qiita.com/api/v2/items?page="+ page +"&per_page=20",
-          dateType: "json",
-          success: function(msg) {
-            html = "";
-            for(var i=0; i<msg.length; i++) {
-              html = html + msg[i].title + "<br>"
-            }
-            $("#qiita").html(html)
-          }
-        });
+        loadData(1)
 
         $("#next").on('click', function(e) {
           e.preventDefault
@@ -25,6 +14,10 @@
           history.pushState(page, "Qiita" + page + "ページ目", "?page=" + page);
         });
 
+        $("#qiita").on('click', '.honbun', function(e) {
+          e.preventDefault
+          $(".desc").toggle();
+        });
         //ブラウザ操作
         $(window).on('popstate', function(e) {
           if (!e.originalEvent.state) return
@@ -55,15 +48,36 @@
           success: function(msg) {
             html = ""
             for(var i=0; i<msg.length; i++) {
-              html = html + msg[i].title + "<br>"
+              html = html + "<div>" +
+                            "<p>" + msg[i].title + "</p>" + 
+                            "<p class='honbun'>クリック</p>" +
+                            "<div class='desc'>" + msg[i].rendered_body + "</div>" +
+                            "</div>"
             }
             $("#qiita").html(html)
+
+
+            //タイトル変更
+            document.title = "Qiitaの新着記事を表示" + "(" + page + "ページ)"
            }
         });
       }
     css:
+      p {
+        margin: 0;
+      }
       body {
         padding: 30px;
+      }
+      .desc {
+        display: none;
+        margin:0;
+      }
+      .honbun {
+        margin:0;
+        padding-top: 3px;
+        padding-bottom: 15px;
+        cursor: pointer;
       }
 
     h1 Qiitaの新着記事をタイトルを表示

@@ -9,14 +9,18 @@
         // ruby側から叩く用にする
         $.ajax({
           type: "GET",
-          url: "/b_hatena",
+          url: "/b_hatena?page=1",
           dateType: "json",
           success: function(body) {
+            //bookmarks = JSON.parse(body)
             var text = ""
             var comment = ""
-            for(var i=0; i<body["bookmarks"].length; i++) {
-              var json = body["bookmarks"][i]
-              comment = json["comment"]
+            for(var i in body) {
+              var bookmark = body[i]
+              if(bookmark.comment == "") {
+                bookmark.comment = "コメントなし"
+              }
+              comment = comment + bookmark.comment + "<br><br>"
             }
             html = comment
             $("#b_hatena").html(comment)
@@ -69,6 +73,9 @@
     css:
       body {
         padding: 30px;
+      }
+      #b_hatena {
+        width: 200px;
       }
     
     h1 はてなブックマークのコメント取得
